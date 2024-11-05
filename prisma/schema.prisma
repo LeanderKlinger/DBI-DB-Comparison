@@ -11,55 +11,58 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  username String @unique
-  email    String @unique
-  hash     String
-
-  image String?
-  bio   String?
-
-  posts    Post[]    @relation("user_posts")
-  likes    Post[]    @relation("user_likes")
-  comments Comment[]
-
-  following User[] @relation("user_follows", references: [id])
-  followers User[] @relation("user_follows", references: [id])
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  username  String    @unique
+  email     String    @unique
+  hash      String
+  image     String?
+  bio       String?
+  
+  // One-to-many relations
+  posts     Post[]    @relation("user_posts")
+  comments  Comment[]
+  
+  // Many-to-many relations
+  likedPosts Post[]   @relation("user_likes")
+  following  User[]   @relation("user_follows")
+  followers  User[]   @relation("user_follows")
 
   @@map("users")
 }
 
 model Post {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  title   String
-  content String
-
-  likedBy  User[]    @relation("user_likes", references: [id])
-  comments Comment[]
-
-  author   User   @relation("user_posts", fields: [authorId], references: [id])
-  authorId String
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  title     String
+  content   String
+  
+  // One-to-many relation with author
+  author    User      @relation("user_posts", fields: [authorId], references: [id])
+  authorId  String
+  
+  // Many-to-many relation with likes
+  likedBy   User[]    @relation("user_likes")
+  
+  // One-to-many relation with comments
+  comments  Comment[]
 
   @@map("posts")
 }
 
 model Comment {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  content String
-
-  post     Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId   String
-  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId String
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  content   String
+  
+  post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String
+  
+  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  String
 
   @@map("comments")
 }
