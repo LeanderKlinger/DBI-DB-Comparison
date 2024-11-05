@@ -26,7 +26,7 @@ export class UserService {
         followers: { select: profileSelect },
         following: { select: profileSelect },
         posts: true,
-        likes: true,
+        likedPosts: true,
       },
     })
 

@@ -67,7 +67,7 @@ export class PostService {
         this.db.post.findUnique({ where: { id: postId } }),
         this.db.user.findUnique({
           where: { id: userId },
-          include: { likes: true },
+          include: { likedPosts: true },
         }),
       ])
 
@@ -77,11 +77,11 @@ export class PostService {
         )
       }
 
-      if (user.likes.some(post => post.id === postId)) {
+      if (user.likedPosts.some(post => post.id === postId)) {
         await this.db.user.update({
           where: { id: userId },
           data: {
-            likes: {
+            likedPosts: {
               disconnect: { id: post.id },
             },
           },
@@ -95,7 +95,7 @@ export class PostService {
       await this.db.user.update({
         where: { id: userId },
         data: {
-          likes: {
+          likedPosts: {
             connect: { id: post.id },
           },
         },
