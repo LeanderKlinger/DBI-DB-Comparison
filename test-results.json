@@ -1,0 +1,62 @@
+{
+  "100": {
+    "postgres": {
+      "writes": 42.67233299999998,
+      "simpleRead": 4.958540999999968,
+      "filteredRead": 5.818458999999848,
+      "projectedRead": 4.20941700000003,
+      "sortedRead": 3.106499999999869,
+      "update": 0,
+      "delete": 0
+    },
+    "mongo": {
+      "writes": 25.67766699999993,
+      "simpleRead": 3.962833000000046,
+      "filteredRead": 1.8229579999999714,
+      "projectedRead": 1.6508750000000418,
+      "sortedRead": 1.600582999999915,
+      "update": 0,
+      "delete": 0
+    }
+  },
+  "1000": {
+    "postgres": {
+      "writes": 128.2437500000001,
+      "simpleRead": 14.687624999999798,
+      "filteredRead": 5.560125000000198,
+      "projectedRead": 5.522291999999879,
+      "sortedRead": 4.890416999999843,
+      "update": 0,
+      "delete": 0
+    },
+    "mongo": {
+      "writes": 107.56720799999994,
+      "simpleRead": 19.71891599999981,
+      "filteredRead": 7.413749999999936,
+      "projectedRead": 4.065583000000061,
+      "sortedRead": 5.442125000000033,
+      "update": 0,
+      "delete": 0
+    }
+  },
+  "30000": {
+    "postgres": {
+      "writes": 3346.2884160000003,
+      "simpleRead": 1648.441041,
+      "filteredRead": 83.51770800000031,
+      "projectedRead": 71.89383300000009,
+      "sortedRead": 75.917958,
+      "update": 0,
+      "delete": 0
+    },
+    "mongo": {
+      "writes": 2799.1558330000007,
+      "simpleRead": 58496.428125,
+      "filteredRead": 19519.13712500001,
+      "projectedRead": 19598.6765,
+      "sortedRead": 18851.85775000001,
+      "update": 0,
+      "delete": 0
+    }
+  }
+}

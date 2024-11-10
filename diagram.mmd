@@ -1,0 +1,38 @@
+classDiagram
+    class Users {
+        _id: ObjectId
+        username: String
+        role: String
+        created_at: Date
+    }
+
+    class Posts {
+        _id: ObjectId
+        title: String
+        body: Text
+        status: String
+        user_id: ObjectId
+        created_at: Date
+        user: Object (denormalized)
+        like_count: Number (denormalized)
+    }
+
+    class Likes {
+        _id: ObjectId
+        post_id: ObjectId
+        user_id: ObjectId
+        created_at: Date
+    }
+
+    class Follows {
+        _id: ObjectId
+        following_user_id: ObjectId
+        followed_user_id: ObjectId
+        created_at: Date
+    }
+
+    Users -- Posts : user_id
+    Posts -- Likes : post_id
+    Users -- Likes : user_id
+    Users -- Follows : following_user_id
+    Users -- Follows : followed_user_id

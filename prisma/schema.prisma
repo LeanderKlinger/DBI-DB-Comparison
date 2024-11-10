@@ -1,0 +1,51 @@
+// schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int       @id @default(autoincrement())
+  username   String    @unique
+  role       String
+  created_at DateTime  @default(now())
+  posts      Post[]
+  likes      Like[]
+  followers  Follows[] @relation("following")
+  following  Follows[] @relation("followed")
+}
+
+model Post {
+  id         Int       @id @default(autoincrement())
+  title      String
+  body       String
+  status     String
+  created_at DateTime  @default(now())
+  user       User      @relation(fields: [user_id], references: [id])
+  user_id    Int
+  likes      Like[]
+}
+
+model Like {
+  post_id Int
+  user_id Int
+  post    Post @relation(fields: [post_id], references: [id])
+  user    User @relation(fields: [user_id], references: [id])
+
+  @@id([post_id, user_id])
+}
+
+model Follows {
+  following_user_id Int
+  followed_user_id  Int
+  created_at        DateTime @default(now())
+  following         User     @relation("following", fields: [following_user_id], references: [id])
+  followed          User     @relation("followed", fields: [followed_user_id], references: [id])
+
+  @@id([following_user_id, followed_user_id])
+}
+
