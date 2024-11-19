@@ -18,6 +18,11 @@ docker run --name mongodb -p 27017:27017 -d mongodb/mongodb-community-server:lat
 ```bash
 bun run src/test-runner.ts
 ```
+
+```bash
+bunx prisma
+```
+
 ### View persisted results
 Test results can be found in the top level test-results.json;
 

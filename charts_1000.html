@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+	<html>
+	<body style="padding: 32px;">
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<canvas id="chart"></canvas>
+	<script>
+		const ctx = document.getElementById('chart');
+		new Chart(ctx, {
+			type: 'bar',
+			data: {
+				labels: ['Writes', 'Simple Read', 'Filtered Read', 'Projected Read', 'Sorted Read', 'Update', 'Delete'],
+				datasets: [
+					{
+						label: "Postgres",
+						fillColor: "blue",
+						data: [212.82366700000057, 26.07787499999995, 7.706457999999657, 7.333875000000262, 5.625334000000294, 9.335250000000087, 10.320708999999624]
+					},
+					{
+						label: "MongoDB",
+						fillColor: "green",
+						data: [143.32300000000032, 29.431750000000648, 14.374166999999943, 7.3695410000000265, 9.25500000000011, 5.439875000000029, 7.224500000000262]
+					},
+					
+				]
+			},
+			options: {
+				scales: { y: { beginAtZero: true } },
+				animation: { duration: 0 },
+			}
+		});
+	</script>
+	</body></html>

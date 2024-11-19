@@ -3,16 +3,18 @@ import { MongoClient, ObjectId } from "mongodb";
 import { performance } from "perf_hooks";
 import { faker } from "@faker-js/faker";
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+
 export class PerformanceTest {
   private prisma: PrismaClient;
   private mongo: MongoClient;
+  private mongoCloud: MongoClient;
   private dbName = "social_network";
 
   constructor() {
     this.prisma = new PrismaClient();
-    this.mongo = new MongoClient(
-      process.env.MONGODB_URL || "mongodb://localhost:27017",
-    );
+    this.mongo = new MongoClient(process.env.MONGODB_URL || "mongodb://localhost:27017");
+	this.mongoCloud = new MongoClient(process.env.MONGODB_CLOUD_URL)
   }
 
   async connect() {
@@ -22,6 +24,7 @@ export class PerformanceTest {
   async disconnect() {
     await this.prisma.$disconnect();
     await this.mongo.close();
+	await this.mongoCloud.close();
   }
 
   private async measure(name: string, fn: () => Promise<void>) {
@@ -93,6 +96,15 @@ export class PerformanceTest {
         update: 0,
         delete: 0,
       },
+	  atlas: {
+        writes: 0,
+        simpleRead: 0,
+        filteredRead: 0,
+        projectedRead: 0,
+        sortedRead: 0,
+        update: 0,
+        delete: 0,
+      }
     };
 
     const { users, generatePosts } = this.generateFakeData(scale);
@@ -200,6 +212,25 @@ export class PerformanceTest {
       },
     );
 
+	results.postgres.update = await this.measure(
+		"Update",
+		async () => {
+		  await this.prisma.post.updateMany({
+			data: {
+				title: 'This is an updated post'
+			}
+		  })
+		},
+	)
+
+	results.postgres.delete = await this.measure(
+		"Delete",
+		async () => {
+		  await this.prisma.like.deleteMany();
+		  await this.prisma.post.deleteMany();
+		},
+	  )
+	
     console.log("------------------------");
     console.log("MongoDB");
     console.log("------------------------");
@@ -369,6 +400,204 @@ export class PerformanceTest {
       ]).toArray();
     });
 
-    return results;
+	results.mongo.update = await this.measure(
+		"Update",
+		async () => {
+		  await db.collection("posts").updateMany({ }, {  $set: { title: "Updated post" } })
+		}
+	)
+
+	results.mongo.delete = await this.measure(
+		"Delete",
+		async () => {
+		  await db.collection("likes").deleteMany()
+		  await db.collection("posts").deleteMany()
+		}
+	)
+
+	// console.log("------------------------");
+    // console.log("Atlas MongoDB");
+    // console.log("------------------------");
+
+    // const cloudDb = this.mongoCloud.db(this.dbName);
+
+    // results.atlas.writes = await this.measure("Writes", async () => {
+    //   // Insert users with MongoDB IDs
+    //   const userInsertResult = await cloudDb.collection("users").insertMany(
+    //     users.map((u) => ({
+    //       ...u,
+    //       created_at: faker.date.past(),
+    //     })),
+    //   );
+
+    //   const dbUsers = await cloudDb.collection("users").find().toArray();
+    //   const posts = Array.from({ length: scale }, () => ({
+    //     title: faker.lorem.sentence(),
+    //     body: faker.lorem.paragraphs(),
+    //     status: faker.helpers.arrayElement(["active", "draft", "archived"]),
+    //     created_at: faker.date.past(),
+    //     user_id: faker.helpers.arrayElement(dbUsers)._id,
+    //   }));
+
+    //   const postInsertResult = await cloudDb.collection("posts").insertMany(posts);
+
+    //   // Generate likes
+    //   const allPosts = await cloudDb.collection("posts").find({}, {
+    //     projection: { _id: 1 },
+    //   }).toArray();
+    //   const likes = Array.from({ length: Math.floor(scale / 2) }, () => ({
+    //     post_id: faker.helpers.arrayElement(allPosts)._id,
+    //     user_id: faker.helpers.arrayElement(dbUsers)._id,
+    //     created_at: faker.date.past(),
+    //   }));
+
+    //   await cloudDb.collection("likes").insertMany(likes);
+    // });
+
+    // results.atlas.simpleRead = await this.measure("Simple Read", async () => {
+    //   await cloudDb.collection("posts").aggregate([
+    //     {
+    //       $lookup: {
+    //         from: "users",
+    //         localField: "user_id",
+    //         foreignField: "_id",
+    //         as: "user",
+    //       },
+    //     },
+    //     {
+    //       $lookup: {
+    //         from: "likes",
+    //         localField: "_id",
+    //         foreignField: "post_id",
+    //         as: "likes",
+    //       },
+    //     },
+    //     { $unwind: "$user" },
+    //   ]).toArray();
+    // });
+
+    // results.atlas.filteredRead = await this.measure(
+    //   "Filtered Read",
+    //   async () => {
+    //     await cloudDb.collection("posts").aggregate([
+    //       {
+    //         $match: {
+    //           status: "active",
+    //         },
+    //       },
+    //       {
+    //         $lookup: {
+    //           from: "users",
+    //           localField: "user_id",
+    //           foreignField: "_id",
+    //           as: "user",
+    //         },
+    //       },
+    //       {
+    //         $lookup: {
+    //           from: "likes",
+    //           localField: "_id",
+    //           foreignField: "post_id",
+    //           as: "likes",
+    //         },
+    //       },
+    //       {
+    //         $match: {
+    //           "likes.0": { $exists: true }, // Has at least one like
+    //         },
+    //       },
+    //       { $unwind: "$user" },
+    //     ]).toArray();
+    //   },
+    // );
+
+    // results.atlas.projectedRead = await this.measure(
+    //   "Projected Read",
+    //   async () => {
+    //     await cloudDb.collection("posts").aggregate([
+    //       {
+    //         $match: { status: "active" },
+    //       },
+    //       {
+    //         $lookup: {
+    //           from: "users",
+    //           localField: "user_id",
+    //           foreignField: "_id",
+    //           as: "user",
+    //         },
+    //       },
+    //       {
+    //         $lookup: {
+    //           from: "likes",
+    //           localField: "_id",
+    //           foreignField: "post_id",
+    //           as: "likes",
+    //         },
+    //       },
+    //       { $unwind: "$user" },
+    //       {
+    //         $project: {
+    //           title: 1,
+    //           created_at: 1,
+    //           "user.username": 1,
+    //           likeCount: { $size: "$likes" },
+    //         },
+    //       },
+    //     ]).toArray();
+    //   },
+    // );
+
+    // results.atlas.sortedRead = await this.measure("Sorted Read", async () => {
+    //   await cloudDb.collection("posts").aggregate([
+    //     {
+    //       $match: { status: "active" },
+    //     },
+    //     {
+    //       $lookup: {
+    //         from: "users",
+    //         localField: "user_id",
+    //         foreignField: "_id",
+    //         as: "user",
+    //       },
+    //     },
+    //     {
+    //       $lookup: {
+    //         from: "likes",
+    //         localField: "_id",
+    //         foreignField: "post_id",
+    //         as: "likes",
+    //       },
+    //     },
+    //     { $unwind: "$user" },
+    //     {
+    //       $project: {
+    //         title: 1,
+    //         created_at: 1,
+    //         "user.username": 1,
+    //         likeCount: { $size: "$likes" },
+    //       },
+    //     },
+    //     {
+    //       $sort: { created_at: -1, title: 1 },
+    //     },
+    //   ]).toArray();
+    // });
+
+	// results.atlas.update = await this.measure(
+	// 	"Update",
+	// 	async () => {
+	// 		await cloudDb.collection("posts").updateMany({ }, {  $set: { title: "Updated post" } })
+	// 	},
+	// );
+
+	// results.atlas.delete = await this.measure(
+	// 	"Delete",
+	// 	async () => {
+	// 		await cloudDb.collection("likes").deleteMany()
+	// 		await cloudDb.collection("posts").deleteMany()
+	// 	},
+	// );
+
+	return results;
   }
 }
