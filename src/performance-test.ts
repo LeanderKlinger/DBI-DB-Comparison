@@ -249,17 +249,17 @@ export class PerformanceTest {
   async runTests(scale: Scale): Promise<TestResults> {
     // Clear everything first
     await this.cleanup();
-
+  
     console.log("Running basic tests...");
     // Run basic tests independently
     const basicData = await this.generateBasicTestData(scale);
     const basicResults = {
-      postgresBasic: await this.runPostgresBasicTests(scale, basicData), // FIXED: Was incorrectly using runPostgresRelationsTests
+      postgresBasic: await this.runPostgresBasicTests(scale, basicData),
       mongoBasic: await this.runMongoBasicTests(this.mongo, basicData),
-      mongoAtlas: await this.runMongoBasicTests(this.mongoCloud, basicData),
+      mongoAtlas: await this.runMongoBasicTests(this.mongoCloud, basicData),  // MongoDB Atlas tests
     };
     await this.cleanup(); // Clean between test sets
-
+  
     console.log("Running relational tests...");
     // Run relational tests independently
     const relationalData = await this.generateRelationalTestData(scale);
@@ -274,14 +274,14 @@ export class PerformanceTest {
       ),
     };
     await this.cleanup(); // Clean between test sets
-
+  
     console.log("Running indexed tests...");
     // Run indexed tests independently
     const mongoData = await this.generateMongoTestData(scale);
     const indexedResults = {
       mongoWithIndexes: await this.runMongoIndexedTests(scale, mongoData),
     };
-
+  
     // Combine all results
     const results: TestResults = {
       postgresBasic: basicResults.postgresBasic,
@@ -289,8 +289,9 @@ export class PerformanceTest {
       mongoBasic: basicResults.mongoBasic,
       mongoWithRelations: relationalResults.mongoWithRelations,
       mongoWithIndexes: indexedResults.mongoWithIndexes,
+      mongoAtlas: basicResults.mongoAtlas,  // Add MongoDB Atlas results
     };
-
+  
     this.formatResults(scale, results);
     return results;
   }

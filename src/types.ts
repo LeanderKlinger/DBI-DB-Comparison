@@ -33,12 +33,13 @@ export type MongoFollows = {
 export type Scale = 100 | 1000 | 30000;
 
 export interface TestResults {
-  postgresBasic: OperationResults;
-  postgresWithRelations: OperationResults;
-  mongoBasic: OperationResults;
-  mongoWithRelations: OperationResults;
-  mongoWithIndexes: OperationResults;
-}
+    postgresBasic: OperationResults;
+    postgresWithRelations: OperationResults;
+    mongoBasic: OperationResults;
+    mongoWithRelations: OperationResults;
+    mongoWithIndexes: OperationResults;
+    mongoAtlas: OperationResults;  // Add MongoDB Atlas type
+  }
 
 export interface OperationResults {
   writes: number;

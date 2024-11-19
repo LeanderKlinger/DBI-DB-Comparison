@@ -1,0 +1,132 @@
+{
+  "scaleTests": {
+    "100": {
+      "postgresBasic": {
+        "writes": 8.130083000000013,
+        "simpleRead": 1.4530420000010054,
+        "filteredRead": 0.8702499999999418,
+        "projectedRead": 0.8746670000000449,
+        "sortedRead": 1.3824580000000424,
+        "update": 1.210624999999709,
+        "delete": 1.125292000000627
+      },
+      "postgresWithRelations": {
+        "writes": 23.17754199999945,
+        "simpleRead": 5.661333999998533,
+        "filteredRead": 2.516417000000729,
+        "projectedRead": 1.7023330000010901,
+        "sortedRead": 1.6673749999990832,
+        "update": 2.40008300000045,
+        "delete": 1.7617499999996653
+      },
+      "mongoBasic": {
+        "writes": 10.827583000000232,
+        "simpleRead": 1.522000000000844,
+        "filteredRead": 1.2385420000009617,
+        "projectedRead": 1.1533330000002024,
+        "sortedRead": 2.445625000000291,
+        "update": 1.8580000000001746,
+        "delete": 1.0218749999985448
+      },
+      "mongoWithRelations": {
+        "writes": 18.41770799999904,
+        "simpleRead": 4.713166999999885,
+        "filteredRead": 1.7447080000001733,
+        "projectedRead": 2.393500000000131,
+        "sortedRead": 1.8919590000004973,
+        "update": 1.842291999999361,
+        "delete": 3.1784159999988333
+      },
+      "mongoWithIndexes": {
+        "writes": 2.668499999999767,
+        "simpleRead": 2.0444169999991573,
+        "filteredRead": 1.2547079999985726,
+        "projectedRead": 0.7736249999998108,
+        "sortedRead": 1.0276249999988067,
+        "update": 0.9497089999986201,
+        "delete": 0.9425000000010186
+      },
+      "mongoAtlas": {
+        "writes": 439.38016699999935,
+        "simpleRead": 1647.0812499999993,
+        "filteredRead": 33.64054100000067,
+        "projectedRead": 217.62191699999858,
+        "sortedRead": 1338.7888340000009,
+        "update": 42.81620899999871,
+        "delete": 38.14329100000032
+      }
+    },
+    "1000": {
+      "postgresBasic": {
+        "writes": 42.499165999999605,
+        "simpleRead": 4.630750000000262,
+        "filteredRead": 1.8070410000000265,
+        "projectedRead": 2.052625000000262,
+        "sortedRead": 4.218958000001294,
+        "update": 2.5844170000000304,
+        "delete": 7.24462499999936
+      },
+      "postgresWithRelations": {
+        "writes": 138.6369999999988,
+        "simpleRead": 35.81941600000209,
+        "filteredRead": 10.484624999997322,
+        "projectedRead": 5.994916999999987,
+        "sortedRead": 5.004124999999476,
+        "update": 8.71833400000105,
+        "delete": 7.098207999999431
+      },
+      "mongoBasic": {
+        "writes": 14.06079200000022,
+        "simpleRead": 4.336457999999766,
+        "filteredRead": 2.062792000000627,
+        "projectedRead": 2.3106250000000728,
+        "sortedRead": 4.0031660000004194,
+        "update": 5.185875000001033,
+        "delete": 5.658208000000741
+      },
+      "mongoWithRelations": {
+        "writes": 60.70137500000055,
+        "simpleRead": 22.027791999997135,
+        "filteredRead": 7.011000000002241,
+        "projectedRead": 6.530166999997164,
+        "sortedRead": 8.039875000002212,
+        "update": 16.94854099999793,
+        "delete": 26.170583999999508
+      },
+      "mongoWithIndexes": {
+        "writes": 12.337208000000828,
+        "simpleRead": 4.24383300000045,
+        "filteredRead": 1.9466670000001614,
+        "projectedRead": 1.4387500000011642,
+        "sortedRead": 4.194583999997121,
+        "update": 6.583416000001307,
+        "delete": 5.482250000000931
+      },
+      "mongoAtlas": {
+        "writes": 1132.311834,
+        "simpleRead": 2034.2008330000008,
+        "filteredRead": 215.7670419999995,
+        "projectedRead": 293.27983400000085,
+        "sortedRead": 1543.833040999998,
+        "update": 79.34575000000041,
+        "delete": 61.62795900000128
+      }
+    }
+  },
+  "aggregationTests": {
+    "postgres": {
+      "postsPerUser": 4.128583000001527,
+      "avgLikesPerPost": 3.5002499999973224,
+      "mostActiveUsers": 0.9012089999996533,
+      "mostLikedPosts": 0.772000000000844,
+      "userEngagement": 0.7440839999981108
+    },
+    "mongo": {
+      "postsPerUser": 1.9788749999970605,
+      "avgLikesPerPost": 3.9027919999971346,
+      "mostActiveUsers": 4.890167000001384,
+      "mostLikedPosts": 6.464375000003201,
+      "userEngagement": 7.640250000000378
+    }
+  }
+}
