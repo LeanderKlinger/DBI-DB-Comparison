@@ -29,3 +29,40 @@ export type MongoFollows = {
     followed_user_id: string;
     created_at: Date;
 }
+
+export type Scale = 100 | 1000 | 30000;
+
+export interface TestResults {
+  postgresBasic: OperationResults;
+  postgresWithRelations: OperationResults;
+  mongoBasic: OperationResults;
+  mongoWithRelations: OperationResults;
+  mongoWithIndexes: OperationResults;
+}
+
+export interface OperationResults {
+  writes: number;
+  simpleRead: number;
+  filteredRead: number;
+  projectedRead: number;
+  sortedRead: number;
+  update: number;
+  delete: number;
+}
+
+export interface AggregationResults {
+  postgres: {
+    postsPerUser: number;
+    avgLikesPerPost: number;
+    mostActiveUsers: number;
+    mostLikedPosts: number;
+    userEngagement: number;
+  };
+  mongo: {
+    postsPerUser: number;
+    avgLikesPerPost: number;
+    mostActiveUsers: number;
+    mostLikedPosts: number;
+    userEngagement: number;
+  };
+}
