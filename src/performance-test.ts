@@ -25,21 +25,23 @@ export class PerformanceTest {
 
   constructor() {
     this.prisma = new PrismaClient();
-    this.mongo = new MongoClient(process.env.MONGODB_URL || "mongodb://localhost:27017");
-	this.mongoCloud = new MongoClient(process.env.MONGODB_CLOUD_URL!)
+    this.mongo = new MongoClient(
+      process.env.MONGODB_URL || "mongodb://localhost:27017",
+    );
+    this.mongoCloud = new MongoClient(process.env.MONGODB_CLOUD_URL!);
   }
 
   async connect() {
-	await this.prisma.$connect();
+    await this.prisma.$connect();
     await this.mongo.connect();
-	await this.mongoCloud.connect();
+    await this.mongoCloud.connect();
     await this.setupMongoIndexes();
   }
 
   async disconnect() {
     await this.prisma.$disconnect();
     await this.mongo.close();
-	await this.mongoCloud.close();
+    await this.mongoCloud.close();
   }
 
   private async setupMongoIndexes() {
@@ -82,7 +84,7 @@ export class PerformanceTest {
         "Mongo Basic",
         "Mongo Relations",
         "Mongo Indexed",
-		"Mongo Atlas Basic"
+        "Mongo Atlas Basic",
       ],
       style: {
         head: ["cyan"],
@@ -99,7 +101,7 @@ export class PerformanceTest {
         `${(results as any).mongoBasic[op].toFixed(2)}ms`,
         `${(results as any).mongoWithRelations[op].toFixed(2)}ms`,
         `${(results as any).mongoWithIndexes[op].toFixed(2)}ms`,
-		`${(results as any).mongoAtlas[op].toFixed(2)}ms`,
+        `${(results as any).mongoAtlas[op].toFixed(2)}ms`,
       ]);
     });
 
@@ -185,60 +187,62 @@ export class PerformanceTest {
     };
   }
 
-  private async generateMongoTestData(scale: Scale): Promise<TestData['relational']> {
+  private async generateMongoTestData(
+    scale: Scale,
+  ): Promise<TestData["relational"]> {
     const db = this.mongo.db(this.dbName);
-    
+
     // Generate users
     const usernameSet = new Set<string>();
     while (usernameSet.size < Math.floor(scale / 10)) {
       const username = `${faker.internet.username()}_${faker.string.nanoid(6)}`;
       usernameSet.add(username);
     }
-  
-    const users = Array.from(usernameSet).map(username => ({
+
+    const users = Array.from(usernameSet).map((username) => ({
       _id: new ObjectId(),
       username,
-      role: faker.helpers.arrayElement(['user', 'moderator']),
-      created_at: faker.date.past()
+      role: faker.helpers.arrayElement(["user", "moderator"]),
+      created_at: faker.date.past(),
     }));
-  
+
     // Insert users
-    await db.collection('users').insertMany(users);
-  
+    await db.collection("users").insertMany(users);
+
     // Generate posts
     const posts = Array.from({ length: scale }, () => ({
       _id: new ObjectId(),
       title: faker.lorem.sentence(),
       body: faker.lorem.paragraphs(),
-      status: faker.helpers.arrayElement(['active', 'draft', 'archived']),
+      status: faker.helpers.arrayElement(["active", "draft", "archived"]),
       created_at: faker.date.past(),
-      user_id: faker.helpers.arrayElement(users)._id
+      user_id: faker.helpers.arrayElement(users)._id,
     }));
-  
+
     // Insert posts
-    await db.collection('posts').insertMany(posts);
-  
+    await db.collection("posts").insertMany(posts);
+
     // Generate unique likes (using Set to prevent duplicates)
     const likeSet = new Set<string>();
     const likes: any[] = [];
-    
+
     // Try to generate about 5 likes per post
     while (likes.length < Math.floor(scale * 5)) {
       const post_id = faker.helpers.arrayElement(posts)._id;
       const user_id = faker.helpers.arrayElement(users)._id;
       const likeKey = `${post_id}_${user_id}`;
-      
+
       if (!likeSet.has(likeKey)) {
         likeSet.add(likeKey);
         likes.push({
           _id: new ObjectId(),
           post_id,
           user_id,
-          created_at: faker.date.past()
+          created_at: faker.date.past(),
         });
       }
     }
-  
+
     return { users, posts, likes };
   }
 
@@ -252,7 +256,7 @@ export class PerformanceTest {
     const basicResults = {
       postgresBasic: await this.runPostgresBasicTests(scale, basicData), // FIXED: Was incorrectly using runPostgresRelationsTests
       mongoBasic: await this.runMongoBasicTests(this.mongo, basicData),
-	  mongoAtlas: await this.runMongoBasicTests(this.mongoCloud, basicData),
+      mongoAtlas: await this.runMongoBasicTests(this.mongoCloud, basicData),
     };
     await this.cleanup(); // Clean between test sets
 
@@ -375,33 +379,36 @@ export class PerformanceTest {
     };
   }
 
-  private async runPostgresRelationsTests(scale: Scale, testData: TestData['relational']): Promise<any> {
+  private async runPostgresRelationsTests(
+    scale: Scale,
+    testData: TestData["relational"],
+  ): Promise<any> {
     return {
       writes: await this.measure("Postgres Relations Writes", async () => {
         // Remove IDs from posts and likes before inserting
-        const postsWithoutIds = testData.posts.map(post => ({
+        const postsWithoutIds = testData.posts.map((post) => ({
           title: post.title,
           body: post.body,
           status: post.status,
           created_at: post.created_at,
-          user_id: post.user_id
+          user_id: post.user_id,
         }));
-  
+
         const posts = await this.prisma.post.createMany({
-          data: postsWithoutIds
+          data: postsWithoutIds,
         });
-  
-        const likesWithoutIds = testData.likes.map(like => ({
+
+        const likesWithoutIds = testData.likes.map((like) => ({
           post_id: like.post_id,
-          user_id: like.user_id
+          user_id: like.user_id,
         }));
-  
+
         await this.prisma.like.createMany({
           data: likesWithoutIds,
           skipDuplicates: true,
         });
       }),
-  
+
       // Rest of the tests remain the same
       simpleRead: await this.measure("Postgres Relations Read", async () => {
         await this.prisma.post.findMany({
@@ -486,7 +493,10 @@ export class PerformanceTest {
     };
   }
 
-  private async runMongoBasicTests(client: MongoClient, testData: any): Promise<any> {
+  private async runMongoBasicTests(
+    client: MongoClient,
+    testData: any,
+  ): Promise<any> {
     const db = client.db(this.dbName);
 
     return {
@@ -548,19 +558,24 @@ export class PerformanceTest {
     };
   }
 
-  private async runMongoRelationsTests(scale: Scale, testData: TestData['relational']): Promise<any> {
+  private async runMongoRelationsTests(
+    scale: Scale,
+    testData: TestData["relational"],
+  ): Promise<any> {
     const db = this.mongo.db(this.dbName);
-  
+
     return {
       writes: await this.measure("Mongo Relations Writes", async () => {
         await db.collection("users").insertMany(testData.users);
         await db.collection("posts").insertMany(testData.posts);
-        
+
         // Insert likes with ordered: false to continue on error
         try {
-          await db.collection("likes").insertMany(testData.likes, { ordered: false });
+          await db.collection("likes").insertMany(testData.likes, {
+            ordered: false,
+          });
         } catch (error) {
-          console.log('Some duplicate likes were skipped');
+          console.log("Some duplicate likes were skipped");
         }
       }),
 
@@ -729,45 +744,48 @@ export class PerformanceTest {
     };
   }
 
-  private async runMongoIndexedTests(scale: Scale, testData: TestData['relational']): Promise<any> {
+  private async runMongoIndexedTests(
+    scale: Scale,
+    testData: TestData["relational"],
+  ): Promise<any> {
     const db = this.mongo.db(this.dbName);
-    
+
     return {
       writes: await this.measure("Mongo Indexed Writes", async () => {
         // Bulk operations remain the same
         const userOps = db.collection("users").initializeUnorderedBulkOp();
-        testData.users.forEach(user => {
+        testData.users.forEach((user) => {
           userOps.insert(user);
         });
-        
+
         const postOps = db.collection("posts").initializeUnorderedBulkOp();
-        testData.posts.forEach(post => {
+        testData.posts.forEach((post) => {
           postOps.insert(post);
         });
-        
+
         const likeOps = db.collection("likes").initializeUnorderedBulkOp();
-        testData.likes.forEach(like => {
+        testData.likes.forEach((like) => {
           likeOps.insert(like);
         });
-  
+
         try {
           await Promise.all([
             userOps.execute(),
             postOps.execute(),
-            likeOps.execute()
+            likeOps.execute(),
           ]);
         } catch (error) {
-          console.log('Some documents were skipped due to duplicates');
+          console.log("Some documents were skipped due to duplicates");
         }
       }),
-  
+
       simpleRead: await this.measure("Mongo Indexed Read", async () => {
         // Use basic index
         await db.collection("posts")
           .find()
           .toArray();
       }),
-  
+
       filteredRead: await this.measure("Mongo Indexed Filtered", async () => {
         // Use single field index only
         await db.collection("posts")
@@ -775,38 +793,38 @@ export class PerformanceTest {
           .hint({ status: 1 })
           .toArray();
       }),
-  
+
       projectedRead: await this.measure("Mongo Indexed Projected", async () => {
         // Use compound index on status and created_at
         await db.collection("posts")
           .find(
             { status: "active" },
-            { projection: { title: 1, created_at: 1 } }
+            { projection: { title: 1, created_at: 1 } },
           )
-          .hint({ "status": 1, "created_at": -1 })  // Match exactly with setupMongoIndexes
+          .hint({ "status": 1, "created_at": -1 }) // Match exactly with setupMongoIndexes
           .toArray();
       }),
-  
+
       sortedRead: await this.measure("Mongo Indexed Sorted", async () => {
         await db.collection("posts")
           .find()
           .sort({ created_at: -1 })
-          .hint({ "created_at": 1 })  // Match exactly with setupMongoIndexes
+          .hint({ "created_at": 1 }) // Match exactly with setupMongoIndexes
           .toArray();
       }),
-  
+
       update: await this.measure("Mongo Indexed Update", async () => {
         await db.collection("posts").updateMany(
           { status: "active" },
-          { $set: { status: "archived" } }
-        );  // Remove hint for update as it's not needed
+          { $set: { status: "archived" } },
+        ); // Remove hint for update as it's not needed
       }),
-  
+
       delete: await this.measure("Mongo Indexed Delete", async () => {
         await db.collection("posts").deleteMany(
-          { status: "archived" }
-        );  // Remove hint for delete as it's not needed
-      })
+          { status: "archived" },
+        ); // Remove hint for delete as it's not needed
+      }),
     };
   }
 

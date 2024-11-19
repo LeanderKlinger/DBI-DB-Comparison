@@ -1,46 +1,34 @@
-const { exec } = require("child_process");
+import { exec } from 'child_process';
+import { promisify } from 'util';
 
-function runCommand(cmd: string) {
-	return new Promise<string>((resolve, reject) => {
-		exec(cmd, (error: any, stdout: any, stderr: any) => {
-			if (error) {
-				console.error(`[ERROR] ${stderr}`)
-				reject()
-				return;
-			}
-
-			if (stderr) {
-				console.error(`[ERROR] ${stderr}`)
-				reject()
-				return;
-			}
-
-			// console.log(stdout)
-			resolve(stdout)
-		});
-	})
-}
-
-let containers: string[] = []
+const execAsync = promisify(exec);
 
 export async function setupDocker() {
-	containers.push(await runCommand('docker run -d -e POSTGRES_DB=mydb -e POSTGRES_PASSWORD=testpass123 -e POSTGRES_USER=postgres -p "6500:5432" postgres:17.0'))
-	containers.push(await runCommand('docker run -d -p 27017:27017 -d mongodb/mongodb-community-server:latest'))
-
-	console.log('[DEBUG] Started containers')
-
-	await new Promise(resolve => setTimeout(resolve, 3000))
-
-	await runCommand('bunx prisma migrate dev')
-
-	console.log('[DEBUG] Migrated databse')
+  try {
+    // Kill any existing containers using the ports
+    await execAsync('docker kill $(docker ps -q)').catch(() => {});
+    await execAsync('docker rm $(docker ps -a -q)').catch(() => {});
+    
+    // Wait a moment for ports to be released
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Start containers with different port mappings
+    await execAsync('docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=postgres postgres');
+    await execAsync('docker run -d -p 27017:27017 mongo');
+    
+    // Wait for containers to be ready
+    await new Promise(resolve => setTimeout(resolve, 5000));
+  } catch (error) {
+    console.error('[ERROR] Docker setup failed:', error);
+    throw error;
+  }
 }
 
 export async function cleanUpDocker() {
-	console.log('[DEBUG] Cleaning up containers...')
-
-	for (const id of containers) {
-		await runCommand(`docker container stop ${id}`)
-		await runCommand(`docker container rm ${id}`)
-	}
+  try {
+    await execAsync('docker kill $(docker ps -q)');
+    await execAsync('docker rm $(docker ps -a -q)');
+  } catch (error) {
+    console.error('[ERROR] Docker cleanup failed:', error);
+  }
 }
