@@ -1,62 +1,143 @@
 {
   "100": {
-    "postgres": {
-      "writes": 42.67233299999998,
-      "simpleRead": 4.958540999999968,
-      "filteredRead": 5.818458999999848,
-      "projectedRead": 4.20941700000003,
-      "sortedRead": 3.106499999999869,
-      "update": 0,
-      "delete": 0
+    "postgresBasic": {
+      "writes": 10.400833000000034,
+      "simpleRead": 1.8777079999999842,
+      "filteredRead": 1.9580830000000446,
+      "projectedRead": 0.838374999999985,
+      "sortedRead": 1.4930420000000026,
+      "update": 1.9591660000000388,
+      "delete": 0.7557919999999854
     },
-    "mongo": {
-      "writes": 25.67766699999993,
-      "simpleRead": 3.962833000000046,
-      "filteredRead": 1.8229579999999714,
-      "projectedRead": 1.6508750000000418,
-      "sortedRead": 1.600582999999915,
-      "update": 0,
-      "delete": 0
+    "postgresWithRelations": {
+      "writes": 19.711082999999974,
+      "simpleRead": 5.951416999999992,
+      "filteredRead": 2.9984170000000177,
+      "projectedRead": 1.7725419999999872,
+      "sortedRead": 1.4360000000000355,
+      "update": 2.52475000000004,
+      "delete": 2.5546249999999873
+    },
+    "mongoBasic": {
+      "writes": 7.051375000000007,
+      "simpleRead": 1.4626250000000027,
+      "filteredRead": 1.1792090000000144,
+      "projectedRead": 0.8503749999999854,
+      "sortedRead": 1.268291999999974,
+      "update": 1.4965830000000437,
+      "delete": 1.2504999999999882
+    },
+    "mongoWithRelations": {
+      "writes": 18.193709000000013,
+      "simpleRead": 4.831665999999984,
+      "filteredRead": 2.814374999999984,
+      "projectedRead": 1.915666999999985,
+      "sortedRead": 1.5680419999999913,
+      "update": 3.576000000000022,
+      "delete": 4.990250000000003
+    },
+    "mongoWithIndexes": {
+      "writes": 3.5337920000000054,
+      "simpleRead": 1.740458999999987,
+      "filteredRead": 1.5119589999999903,
+      "projectedRead": 0.8597500000000196,
+      "sortedRead": 1.096125000000029,
+      "update": 1.2544579999999996,
+      "delete": 1.3507079999999974
     }
   },
   "1000": {
-    "postgres": {
-      "writes": 128.2437500000001,
-      "simpleRead": 14.687624999999798,
-      "filteredRead": 5.560125000000198,
-      "projectedRead": 5.522291999999879,
-      "sortedRead": 4.890416999999843,
-      "update": 0,
-      "delete": 0
+    "postgresBasic": {
+      "writes": 47.634250000000065,
+      "simpleRead": 5.907958000000008,
+      "filteredRead": 2.2554999999999836,
+      "projectedRead": 2.183540999999991,
+      "sortedRead": 5.429082999999991,
+      "update": 3.097082999999998,
+      "delete": 4.286000000000058
     },
-    "mongo": {
-      "writes": 107.56720799999994,
-      "simpleRead": 19.71891599999981,
-      "filteredRead": 7.413749999999936,
-      "projectedRead": 4.065583000000061,
-      "sortedRead": 5.442125000000033,
-      "update": 0,
-      "delete": 0
+    "postgresWithRelations": {
+      "writes": 141.30200000000002,
+      "simpleRead": 38.8676670000001,
+      "filteredRead": 9.86566599999992,
+      "projectedRead": 5.188000000000102,
+      "sortedRead": 4.67254099999991,
+      "update": 10.121458999999959,
+      "delete": 124.44374999999991
+    },
+    "mongoBasic": {
+      "writes": 18.536917000000017,
+      "simpleRead": 6.28125,
+      "filteredRead": 2.904792000000043,
+      "projectedRead": 2.457457999999974,
+      "sortedRead": 4.370833999999945,
+      "update": 6.342209000000025,
+      "delete": 6.165374999999926
+    },
+    "mongoWithRelations": {
+      "writes": 65.61683300000004,
+      "simpleRead": 47.09887499999991,
+      "filteredRead": 13.857833000000028,
+      "projectedRead": 13.96895799999993,
+      "sortedRead": 14.258624999999938,
+      "update": 34.59279199999992,
+      "delete": 58.81391699999995
+    },
+    "mongoWithIndexes": {
+      "writes": 13.110209000000168,
+      "simpleRead": 6.420165999999881,
+      "filteredRead": 3.073375000000169,
+      "projectedRead": 1.6383749999999964,
+      "sortedRead": 6.612959000000046,
+      "update": 4.8288330000000315,
+      "delete": 6.376917000000049
     }
   },
   "30000": {
-    "postgres": {
-      "writes": 3346.2884160000003,
-      "simpleRead": 1648.441041,
-      "filteredRead": 83.51770800000031,
-      "projectedRead": 71.89383300000009,
-      "sortedRead": 75.917958,
-      "update": 0,
-      "delete": 0
+    "postgresBasic": {
+      "writes": 1893.6062499999998,
+      "simpleRead": 132.5632910000004,
+      "filteredRead": 41.77441699999963,
+      "projectedRead": 57.76041600000008,
+      "sortedRead": 143.71604200000002,
+      "update": 54.45662500000071,
+      "delete": 142.3511669999998
     },
-    "mongo": {
-      "writes": 2799.1558330000007,
-      "simpleRead": 58496.428125,
-      "filteredRead": 19519.13712500001,
-      "projectedRead": 19598.6765,
-      "sortedRead": 18851.85775000001,
-      "update": 0,
-      "delete": 0
+    "postgresWithRelations": {
+      "writes": 4160.307166999999,
+      "simpleRead": 2278.6687500000007,
+      "filteredRead": 598.0765840000022,
+      "projectedRead": 173.95195799999783,
+      "sortedRead": 160.72520900000018,
+      "update": 234.22491600000285,
+      "delete": 313.98416599999837
+    },
+    "mongoBasic": {
+      "writes": 318.3988330000002,
+      "simpleRead": 125.37145799999962,
+      "filteredRead": 39.13404199999968,
+      "projectedRead": 45.21349999999984,
+      "sortedRead": 148.13508300000012,
+      "update": 151.6705410000004,
+      "delete": 128.45333299999947
+    },
+    "mongoWithRelations": {
+      "writes": 1558.3671670000003,
+      "simpleRead": 164.19266699999935,
+      "filteredRead": 60.3637910000034,
+      "projectedRead": 57.25029200000063,
+      "sortedRead": 59.11516699999993,
+      "update": 88.71570799999972,
+      "delete": 597.9258750000008
+    },
+    "mongoWithIndexes": {
+      "writes": 282.184916000002,
+      "simpleRead": 324.67420800000036,
+      "filteredRead": 168.79454199999964,
+      "projectedRead": 158.35454200000095,
+      "sortedRead": 3154.480542000001,
+      "update": 137.48916699999972,
+      "delete": 147.5692080000008
     }
   }
 }
