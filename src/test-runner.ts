@@ -3,6 +3,7 @@ import { PerformanceTest } from './performance-test';
 import { writeFileSync } from 'fs';
 import Table from 'cli-table3';
 
+
 async function runAllTests() {
   console.log('[DEBUG] Setting up test environment...');
   
